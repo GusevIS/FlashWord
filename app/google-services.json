@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "530855776307",
+    "project_id": "flashword-8b124",
+    "storage_bucket": "flashword-8b124.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530855776307:android:423d691870fb6c8af91346",
+        "android_client_info": {
+          "package_name": "com.example.flashword"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkWxk2pyrXvogUpkssslL5EvKHriERJBk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

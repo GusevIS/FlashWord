@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">FlashWord</string>
+    <string name="web_client_id">530855776307-5lh3d4988c2cm9uchj5rljnfhfkc7k36.apps.googleusercontent.com</string>
+
+    <string name="sign_in">"Sign In"</string>
+    <string name="sign_up">"Sign Up"</string>
+    <string name="login_prompt">"Log in now and keep learning"</string>
+    <string name="username">"Username"</string>
+    <string name="password">"Password"</string>
+    <string name="forgot_password">"Forgot password?"</string>
+    <string name="or_sign_in_with">"Or Sign in With"</string>
+    <string name="dont_have_acc">"Don't have an account?"</string>
+</resources>
