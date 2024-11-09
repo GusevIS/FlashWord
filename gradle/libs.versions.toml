@@ -1,33 +1,31 @@
 [versions]
-activityCompose = "1.9.2"
-composeBom = "2024.09.02"
+activityCompose = "1.9.3"
+composeBom = "2024.10.01"
 converterGson = "2.7.2"
-coreKtx = "1.13.1"
-coreSplashscreen = "1.2.0-alpha02"
-dagger = "2.46.1"
-daggerCompiler = "2.46.1"
+coreKtx = "1.15.0"
+dagger = "2.52"
+daggerCompiler = "2.52"
 datastorePreferences = "1.1.1"
 espressoCore = "3.6.1"
-firebaseBom = "33.3.0"
+firebaseBom = "33.5.1"
 googleServices = "4.4.2"
 junit = "4.13.2"
 junitVersion = "1.2.1"
-kotlinxCoroutinesAndroid = "1.8.0"
-lifecycleRuntimeKtx = "2.8.6"
-lifecycleViewmodelCompose = "2.8.6"
-lifecycleViewmodelKtx = "2.8.6"
-navigationCompose = "2.8.1"
+kotlinxCoroutinesAndroid = "1.8.1"
+lifecycleRuntimeKtx = "2.8.7"
+lifecycleViewmodelCompose = "2.8.7"
+lifecycleViewmodelKtx = "2.8.7"
+navigationCompose = "2.8.3"
 okhttp = "4.12.0"
 playServicesAuth = "21.2.0"
 retrofit = "2.9.0"
-andrGradlePl = "8.2.2"
-kotlinAndroid = "1.9.0"
+andrGradlePl = "8.7.2"
+kotlinAndroid = "2.0.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
-androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
@@ -58,3 +56,4 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "andrGradlePl" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinAndroid" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinAndroid" }

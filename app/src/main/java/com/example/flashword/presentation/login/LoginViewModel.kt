@@ -18,31 +18,8 @@ class LoginViewModel @Inject constructor(
     private val _state = MutableStateFlow(SignInState())
     val state = _state.asStateFlow()
 
-    fun onSignInResult(result: SignInResult) {
-        _state.update { it.copy(
-            isSignInSuccessful = result.data != null,
-            signInError = result.errorMessage
-
-        ) }
-    }
-
     fun resetState() {
         _state.update { SignInState() }
     }
-
-    fun cashUserData(data: UserData) {
-        viewModelScope.launch {
-            userManager.onLogin(data.userId, data.username.orEmpty(), data.profilePictureUrl.orEmpty())
-        }
-    }
-
-    fun getCashedUserName() = flow {
-
-        emit(userManager.getUserName().first())
-
-
-    }
-
-
 
 }

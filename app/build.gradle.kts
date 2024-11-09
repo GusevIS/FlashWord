@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.compose.compiler)
     id("kotlin-kapt")
     id("kotlin-android")
     id("com.google.gms.google-services")
@@ -10,12 +11,12 @@ plugins {
 
 android {
     namespace = "com.example.flashword"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.flashword"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -104,6 +105,4 @@ dependencies {
 
     //preferences datastore
     implementation(libs.androidx.datastore.preferences)
-
-    implementation(libs.androidx.core.splashscreen)
 }

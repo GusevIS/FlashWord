@@ -16,7 +16,6 @@ import com.example.flashword.di.modules.UserPreferencesModule
 import com.example.flashword.domain.repos.UserPreferencesRepo
 import com.example.flashword.domain.user_data.UserManager
 import com.example.flashword.presentation.dashboard.DashboardViewModel
-import com.example.flashword.presentation.login.GoogleAuthUiClient
 import com.example.flashword.presentation.login.LoginViewModel
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -77,23 +76,7 @@ interface ViewModelBindsModule {
 
 @Module
 class AuthModule {
-    @Provides
-    fun provideSignInClient(
-        @AppContext context: Context
-    ): SignInClient {
-        return Identity.getSignInClient(context)
-    }
 
-    @Provides
-    fun provideGoogleAuthUiClient(
-        @AppContext context: Context,
-        oneTapClient: SignInClient
-    ): GoogleAuthUiClient {
-        return GoogleAuthUiClient(
-            context,
-            oneTapClient
-        )
-    }
 }
 
 @Module(subcomponents = [LoginComponent::class, DashboardComponent::class, UserComponent::class])

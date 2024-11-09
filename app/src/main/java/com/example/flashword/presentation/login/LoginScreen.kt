@@ -51,17 +51,13 @@ fun LoginScreen(
 //    getViewModelFactory: () -> ViewModelProvider.Factory,
 //    viewModel: LoginViewModel = viewModel(factory = getViewModelFactory()),
     viewModel: LoginViewModel,
-    onSignInSuccessful: () -> Unit,
+    onSignInSuccessful: () -> Unit = {},
     onSignInClick: () -> Unit = {},
     onSignUpClick: () -> Unit = {},
-    onGoogleSignInClick: () -> Unit
+    onGoogleSignInClick: () -> Unit = {},
 
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-
-
-
-
 
     LoginScreenContent(
         uiState = uiState,
@@ -93,29 +89,6 @@ fun LoginScreenContent(
     }
 
     val isFieldsEmpty = userName.isNotEmpty() && userPassword.isNotEmpty()
-
-    val context = LocalContext.current
-    LaunchedEffect(key1 = uiState.signInError) {
-        uiState.signInError?.let { error ->
-            Toast.makeText(
-                context,
-                error,
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
-    LaunchedEffect(key1 = uiState.isSignInSuccessful) {
-        if(uiState.isSignInSuccessful) {
-            Toast.makeText(
-                context,
-                "Sign in successful",
-                Toast.LENGTH_LONG
-            ).show()
-
-            onSignInSuccessful()
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -217,20 +190,7 @@ fun LoginScreenContent(
                     .clip(CircleShape)
             )
         }
-
-
-
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(16.dp),
-//            contentAlignment = Alignment.Center
-//        ) {
-//
-//        }
     }
-
-
 }
 
 val defaultPadding = 16.dp
