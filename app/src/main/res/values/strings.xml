@@ -5,9 +5,14 @@
     <string name="sign_in">"Sign In"</string>
     <string name="sign_up">"Sign Up"</string>
     <string name="login_prompt">"Log in now and keep learning"</string>
+    <string name="registration_prompt">"Create a new account"</string>
     <string name="username">"Username"</string>
     <string name="password">"Password"</string>
+    <string name="confirm_password">"Confirm Password"</string>
+    <string name="email">"Email"</string>
     <string name="forgot_password">"Forgot password?"</string>
+    <string name="registration_agreement">"I agree with Privacy and Policy"</string>
     <string name="or_sign_in_with">"Or Sign in With"</string>
     <string name="dont_have_acc">"Don't have an account?"</string>
+    <string name="already_have_acc">"Already have an account?"</string>
 </resources>

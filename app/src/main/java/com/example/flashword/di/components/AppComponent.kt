@@ -17,6 +17,7 @@ import com.example.flashword.domain.repos.UserPreferencesRepo
 import com.example.flashword.domain.user_data.UserManager
 import com.example.flashword.presentation.dashboard.DashboardViewModel
 import com.example.flashword.presentation.login.LoginViewModel
+import com.example.flashword.presentation.registration.RegistrationViewModel
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import dagger.Binds
@@ -67,6 +68,10 @@ interface ViewModelBindsModule {
     @Binds
     @[IntoMap ViewModelClassKey(LoginViewModel::class)]
     fun bindsLoginViewModule(viewModel: LoginViewModel): ViewModel
+
+    @Binds
+    @[IntoMap ViewModelClassKey(RegistrationViewModel::class)]
+    fun bindsRegistrationViewModule(viewModel: RegistrationViewModel): ViewModel
 
     @Binds
     @[IntoMap ViewModelClassKey(DashboardViewModel::class)]

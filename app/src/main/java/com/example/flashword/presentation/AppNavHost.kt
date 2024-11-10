@@ -14,6 +14,8 @@ import androidx.navigation.compose.composable
 import com.example.flashword.presentation.dashboard.DashboardScreen
 import com.example.flashword.presentation.login.LoginScreen
 import com.example.flashword.presentation.login.LoginViewModel
+import com.example.flashword.presentation.registration.RegistrationScreen
+import com.example.flashword.presentation.registration.RegistrationViewModel
 
 @Composable
 fun AppNavHost(
@@ -37,11 +39,21 @@ fun AppNavHost(
             val state by viewModel.state.collectAsStateWithLifecycle()
 
             LoginScreen(
-                navController = navController,
-                viewModel = viewModel
-            ) {
+                state = state,
 
-            }
+                onSignUpClick = { navController.navigateSingleTopTo(NavigationItem.Registration.route) }
+            )
+        }
+
+        composable(NavigationItem.Registration.route) {
+            val viewModel: RegistrationViewModel = viewModel(factory = getViewModelFactory())
+            val state by viewModel.state.collectAsStateWithLifecycle()
+
+            RegistrationScreen(
+                state = state,
+
+                onSignInClick = { navController.navigateSingleTopTo(NavigationItem.Login.route) }
+            )
         }
 
         composable(NavigationItem.Dashboard.route) {
@@ -53,3 +65,6 @@ fun AppNavHost(
 
     }
 }
+
+fun NavHostController.navigateSingleTopTo(route: String) =
+    this.navigate(route) { launchSingleTop = true }

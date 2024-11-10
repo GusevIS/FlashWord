@@ -19,7 +19,6 @@ annotation class ScreenScope
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ViewModelScope
 
-
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
 annotation class LoginFlowScope
@@ -33,7 +32,6 @@ annotation class LoggedUserScope
 @Retention(AnnotationRetention.RUNTIME)
 @MapKey
 annotation class ViewModelClassKey(val value: KClass<out ViewModel>)
-
 
 @Qualifier
 annotation class AppContext
