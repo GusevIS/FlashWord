@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
-import com.example.flashword.presentation.AppNavHost
+import com.example.flashword.presentation.navigation.AppNavHost
 import com.example.flashword.ui.theme.FlashWordTheme
 import javax.inject.Inject
 
@@ -48,6 +48,4 @@ fun FlashWordContent(
 
         }
     }
-
-
 }

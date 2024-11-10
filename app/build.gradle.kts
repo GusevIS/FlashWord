@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
     id("kotlin-kapt")
     id("kotlin-android")
     id("com.google.gms.google-services")
@@ -105,4 +106,7 @@ dependencies {
 
     //preferences datastore
     implementation(libs.androidx.datastore.preferences)
+
+    //serialization
+    implementation(libs.serialization)
 }
