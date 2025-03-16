@@ -38,8 +38,11 @@ android {
     }
 
     compileOptions {
+
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+
+
     }
     kotlinOptions {
         jvmTarget = "17"
@@ -103,10 +106,18 @@ dependencies {
     implementation(libs.firebase.auth)
     // Also add the dependency for the Google Play services library and specify its version
     implementation(libs.play.services.auth)
+    implementation(libs.firebase.firestore)
 
     //preferences datastore
     implementation(libs.androidx.datastore.preferences)
 
     //serialization
     implementation(libs.serialization)
+
+    //graphs
+    //implementation(libs.charts.android)
+//    implementation(libs.vico.compose.m3)
+//    implementation(libs.vico.compose)
+//    implementation(libs.core)
+    implementation (libs.compose.charts)
 }

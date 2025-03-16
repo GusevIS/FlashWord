@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName
 
 data class UserDto (
     @SerializedName("name_param")
-    val nameParam: String,
+    val nameParam: String? = "",
     @SerializedName("picture_url_param")
-    val pictureUrlParam: String,
+    val pictureUrlParam: String? = "",
 
 )

@@ -21,7 +21,9 @@ fun DefaultOutlineIconTextField (
     labelText: String = "label",
     leadingIcon: ImageVector? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
-    visualTransformation: VisualTransformation = VisualTransformation.None
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    isError: Boolean = false,
+    errorMessage: String? = null,
 ) {
     OutlinedTextField(
         modifier = modifier,
@@ -31,7 +33,11 @@ fun DefaultOutlineIconTextField (
         leadingIcon = {if (leadingIcon != null) Icon(imageVector = leadingIcon,null)},
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         visualTransformation = visualTransformation,
-        shape = RoundedCornerShape(30)
+        shape = RoundedCornerShape(30),
+
+        isError = isError,
+        supportingText = { if (errorMessage != null) Text(errorMessage)}
+
     )
 }
 
@@ -39,7 +45,7 @@ fun DefaultOutlineIconTextField (
 @Preview(showBackground = true)
 fun DefaultOutlineIconTextFieldPreview() {
     FlashWordTheme {
-        DefaultOutlineIconTextField ()
+        DefaultOutlineIconTextField (isError = true, errorMessage = "invalid email")
     }
 
 }

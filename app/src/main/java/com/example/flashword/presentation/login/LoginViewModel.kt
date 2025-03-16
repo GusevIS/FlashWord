@@ -1,25 +1,37 @@
 package com.example.flashword.presentation.login
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.flashword.domain.repos.UserPreferencesRepo
-import com.example.flashword.domain.user_data.UserManager
+import android.util.Log
+import com.example.flashword.FlashAppViewModel
+import com.example.flashword.domain.repos.AccountService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class LoginViewModel @Inject constructor(
-    private val userManager: UserManager,
-): ViewModel() {
+    private val accountService: AccountService
+): FlashAppViewModel() {
     private val _state = MutableStateFlow(SignInState())
     val state = _state.asStateFlow()
 
     fun resetState() {
         _state.update { SignInState() }
+    }
+
+    fun updateEmail(email: String) {
+        _state.value = _state.value.copy(email = email)
+    }
+
+    fun updatePassword(password: String) {
+        _state.value = _state.value.copy(password = password)
+    }
+
+    fun onSignInClick() {
+        launchCatching {
+            accountService.signIn(state.value.email.trim(), state.value.password.trim())
+            _state.value = _state.value.copy( isSignInSuccessful = true)
+        }
+
     }
 
 }

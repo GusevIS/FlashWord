@@ -2,6 +2,12 @@
     <string name="app_name">FlashWord</string>
     <string name="web_client_id">530855776307-5lh3d4988c2cm9uchj5rljnfhfkc7k36.apps.googleusercontent.com</string>
 
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+
     <string name="sign_in">"Sign In"</string>
     <string name="sign_up">"Sign Up"</string>
     <string name="login_prompt">"Log in now and keep learning"</string>
@@ -15,4 +21,54 @@
     <string name="or_sign_in_with">"Or Sign in With"</string>
     <string name="dont_have_acc">"Don't have an account?"</string>
     <string name="already_have_acc">"Already have an account?"</string>
+
+    <string name="sign_up_passwords_dont_match">Passwords do not match</string>
+    <string name="sign_up_passwords_too_short">Password must be at least 8 characters long</string>
+    <string name="sign_up_invalid_passwords">Ensure your password is at least 8 characters long and includes at least one uppercase letter, one lowercase letter, and one number.</string>
+    <string name="sign_up_username_too_short">Username must be at least 4 characters long</string>
+    <string name="sign_up_invalid_email">Invalid email</string>
+
+    <string name="edit">edit</string>
+
+<!--Profile-->
+    <string name="language">Language</string>
+    <string name="theme">Theme</string>
+    <string name="notifications">Notifications</string>
+    <string name="sync">Synchronization</string>
+    <string name="repetition_settings">Repetition Settings</string>
+    <string name="about">About</string>
+    <string name="log_out">Log out</string>
+    <string name="confirm_logout">Are you sure you want to log out?</string>
+
+    <!--Dashboard-->
+    <string name="dashboard_title">My Decks</string>
+    <string name="search_decks">Search card decks</string>
+    <string name="todays_plan">Today\'s Plan</string>
+    <string name="total_cards_count">cards to review</string>
+    <string name="start_reviewing_all">Review all</string>
+    <string name="new_cards_count">New: </string>
+    <string name="cards_to_learn_count">Learn: </string>
+    <string name="cards_to_review_count">Review: </string>
+    <string name="today_due">cards due</string>
+    <string name="cards_today_progress">Today\'s progress</string>
+    <string name="dashboard_add_deck_description">Come up with a name for the deck</string>
+
+    <!--Statistics-->
+    <string name="reviews_stat">Reviews</string>
+    <string name="number_of_repeated">The number of cards you repeated</string>
+    <string name="month_stat">1 month</string>
+    <string name="quarter_stat">3 months</string>
+    <string name="year_stat">1 year</string>
+    <string name="cards_reviewed">Total %1$s reviews</string>
+    <string name="cards_learned">Total %1$s learned</string>
+    <string name="avg_cards_reviewed">Average over period: %1$s reviews/day</string>
+    <string name="avg_cards_learned">Average over period: %1$s learned/day</string>
+    <string name="days_ago">days ago</string>
+
+    <string name="learned_stat">Learned</string>
+    <string name="number_of_learned">The number of cards you learned</string>
+
+    <!--Add card-->
+    <string name="enter_front_desc">enter the front of the card</string>
+    <string name="enter_back_desc">enter the back of the card</string>
 </resources>

@@ -1,7 +1,10 @@
 [versions]
 activityCompose = "1.9.3"
+chartsAndroid = "2.0.0"
 composeBom = "2024.10.01"
+composeCharts = "0.1.2"
 converterGson = "2.7.2"
+core = "2.0.3"
 coreKtx = "1.15.0"
 dagger = "2.52"
 daggerCompiler = "2.52"
@@ -23,6 +26,8 @@ andrGradlePl = "8.7.2"
 kotlinAndroid = "2.0.0"
 serializationJson = "1.7.3"
 serializationPlugin = "2.0.20"
+kizitonwoseCalendar = "2.1.5"
+vico = "2.0.3"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
@@ -43,11 +48,15 @@ androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+charts-android = { module = "io.github.dautovicharis:charts-android", version.ref = "chartsAndroid" }
+compose-charts = { module = "io.github.ehsannarmani:compose-charts", version.ref = "composeCharts" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+core = { module = "com.patrykandpatrick.vico:core", version.ref = "core" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerCompiler" }
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 google-services = { module = "com.google.gms:google-services", version.ref = "googleServices" }
 junit = { module = "junit:junit", version.ref = "junit" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
@@ -55,6 +64,8 @@ okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serializationJson"}
+vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
+vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "andrGradlePl" }

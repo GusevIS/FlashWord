@@ -17,6 +17,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,14 +37,30 @@ import com.example.flashword.ui.theme.FlashWordTheme
 @Composable
 fun RegistrationScreen(
     modifier: Modifier = Modifier,
-    state: RegistrationState = RegistrationState(false, null),
+    state: RegistrationState = RegistrationState(false),
+    onUsernameChange: (String) -> Unit = {},
+    onEmailChange: (String) -> Unit = {},
+    onPasswordChange: (String) -> Unit = {},
+    onConfirmedPasswordChange: (String) -> Unit = {},
+
     onSignUpSuccessful: () -> Unit = {},
     onSignUpClick: () -> Unit = {},
     onSignInClick: () -> Unit = {},
 ) {
+    LaunchedEffect(state.isSignUpSuccessful) {
+        if (state.isSignUpSuccessful) {
+            onSignUpSuccessful.invoke()
+        }
+    }
+
     RegistrationScreenContent(
         state = state,
-        onSignUpSuccessful = onSignUpSuccessful,
+
+        onUsernameChange = onUsernameChange,
+        onEmailChange = onEmailChange,
+        onPasswordChange = onPasswordChange,
+        onConfirmedPasswordChange = onConfirmedPasswordChange,
+
         onSignUpClick = onSignUpClick,
         onSignInClick = onSignInClick
     )
@@ -52,30 +69,17 @@ fun RegistrationScreen(
 @Composable
 fun RegistrationScreenContent(
     modifier: Modifier = Modifier,
-    state: RegistrationState = RegistrationState(false, null),
-    onSignUpSuccessful: () -> Unit = {},
+    state: RegistrationState = RegistrationState(false),
+
+    onUsernameChange: (String) -> Unit = {},
+    onEmailChange: (String) -> Unit = {},
+    onPasswordChange: (String) -> Unit = {},
+    onConfirmedPasswordChange: (String) -> Unit = {},
+
     onSignInClick: () -> Unit = {},
     onSignUpClick: () -> Unit = {},
 ) {
-    val (userName, setUsername) = rememberSaveable {
-        mutableStateOf("")
-    }
-
-    val (userEmail, setUserEmail) = rememberSaveable {
-        mutableStateOf("")
-    }
-
-    val (userPassword, setUserPassword) = rememberSaveable {
-        mutableStateOf("")
-    }
-
-    val (userConfirmedPassword, setUserConfirmedPassword) = rememberSaveable {
-        mutableStateOf("")
-    }
-
     var checked by rememberSaveable { mutableStateOf(true) }
-
-    val isFieldsEmpty = userName.isNotEmpty() && userPassword.isNotEmpty()
 
     Column(
         modifier = Modifier
@@ -99,45 +103,76 @@ fun RegistrationScreenContent(
 
         Spacer(Modifier.height(itemSpacing))
 
-        DefaultOutlineIconTextField(
-            value = userName,
-            onValueChange = setUsername,
-            labelText = stringResource(R.string.username),
-            leadingIcon = Icons.Default.Person,
-            modifier = Modifier.fillMaxWidth()
-        )
+        state.apply {
+            DefaultOutlineIconTextField(
+                value = username,
+                onValueChange = onUsernameChange,
+                labelText = stringResource(R.string.username),
+                leadingIcon = Icons.Default.Person,
+                modifier = Modifier.fillMaxWidth(),
+                isError = signUpError == SignUpError.USERNAME_TOO_SHORT,
+                errorMessage = when (signUpError) {
+                    SignUpError.USERNAME_TOO_SHORT -> stringResource(R.string.sign_up_username_too_short)
+                    else -> null
+                }
+            )
+        }
 
         Spacer(Modifier.height(itemSpacing))
 
-        DefaultOutlineIconTextField(
-            value = userEmail,
-            onValueChange = setUserEmail,
-            labelText = stringResource(R.string.email),
-            leadingIcon = Icons.Default.Email,
-            modifier = Modifier.fillMaxWidth()
-        )
+        state.apply {
+            DefaultOutlineIconTextField(
+                value = email,
+                onValueChange = onEmailChange,
+                labelText = stringResource(R.string.email),
+                leadingIcon = Icons.Default.Email,
+                modifier = Modifier.fillMaxWidth(),
+                isError = signUpError == SignUpError.INVALID_EMAIL,
+                errorMessage = when (signUpError) {
+                    SignUpError.INVALID_EMAIL -> stringResource(R.string.sign_up_invalid_email)
+                    else -> null
+                }
+            )
+        }
 
         Spacer(Modifier.height(itemSpacing))
 
-        DefaultOutlineIconTextField(
-            value = userPassword,
-            onValueChange = setUserPassword,
-            labelText = stringResource(R.string.password),
-            leadingIcon = Icons.Default.Lock,
-            modifier = Modifier.fillMaxWidth()
-        )
+        state.apply {
+            DefaultOutlineIconTextField(
+                value = password,
+                onValueChange = onPasswordChange,
+                labelText = stringResource(R.string.password),
+                leadingIcon = Icons.Default.Lock,
+                modifier = Modifier.fillMaxWidth(),
+                keyboardType = KeyboardType.Password,
+                visualTransformation = PasswordVisualTransformation(),
+                isError = (signUpError == SignUpError.PASSWORD_TOO_SHORT) or (signUpError == SignUpError.INVALID_PASSWORD),
+                errorMessage = when (signUpError) {
+                    SignUpError.PASSWORD_TOO_SHORT -> stringResource(R.string.sign_up_passwords_too_short)
+                    SignUpError.INVALID_PASSWORD -> stringResource(R.string.sign_up_invalid_passwords)
+                    else -> null
+                }
+            )
+        }
 
         Spacer(Modifier.height(itemSpacing))
 
-        DefaultOutlineIconTextField(
-            value = userConfirmedPassword,
-            onValueChange = setUserConfirmedPassword,
-            labelText = stringResource(R.string.confirm_password),
-            leadingIcon = Icons.Default.Lock,
-            modifier = Modifier.fillMaxWidth(),
-            keyboardType = KeyboardType.Password,
-            visualTransformation = PasswordVisualTransformation()
-        )
+        state.apply {
+            DefaultOutlineIconTextField(
+                value = confirmedPassword,
+                onValueChange = onConfirmedPasswordChange,
+                labelText = stringResource(R.string.confirm_password),
+                leadingIcon = Icons.Default.Lock,
+                modifier = Modifier.fillMaxWidth(),
+                keyboardType = KeyboardType.Password,
+                visualTransformation = PasswordVisualTransformation(),
+                isError = (signUpError == SignUpError.PASSWORDS_DO_NOT_MATCH),
+                errorMessage = when (signUpError) {
+                    SignUpError.PASSWORDS_DO_NOT_MATCH -> stringResource(R.string.sign_up_passwords_dont_match)
+                    else -> null
+                }
+            )
+        }
 
         Spacer(Modifier.height(itemSpacing))
 

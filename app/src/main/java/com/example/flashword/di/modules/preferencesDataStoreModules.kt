@@ -12,7 +12,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 
-
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore("user_preferences")
 
 @Module

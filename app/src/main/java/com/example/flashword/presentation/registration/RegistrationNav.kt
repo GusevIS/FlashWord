@@ -8,6 +8,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.example.flashword.presentation.dashboard.navigateToDashboard
+import com.example.flashword.presentation.login.navigateToLogin
 import com.example.flashword.presentation.navigation.Destination
 import kotlinx.serialization.Serializable
 import com.example.flashword.presentation.navigation.navigateSingleTopTo
@@ -21,7 +23,7 @@ fun NavHostController.navigateToRegistration() {
 
 fun NavGraphBuilder.registrationDestination(
     getViewModelFactory: () -> ViewModelProvider.Factory,
-    onSignInClick: () -> Unit
+    navController: NavHostController,
 ) {
     composable<RegistrationScreen> {
         val viewModel: RegistrationViewModel = viewModel(factory = getViewModelFactory())
@@ -29,8 +31,15 @@ fun NavGraphBuilder.registrationDestination(
 
         RegistrationScreen(
             state = state,
+            onUsernameChange = viewModel::updateUsername,
+            onEmailChange = viewModel::updateEmail,
+            onPasswordChange = viewModel::updatePassword,
+            onConfirmedPasswordChange = viewModel::updateConfirmedPassword,
 
-            onSignInClick = onSignInClick
+            onSignUpClick = viewModel::onSignUpClick,
+
+            onSignInClick = navController::navigateToLogin,
+            onSignUpSuccessful = navController::navigateToLogin
         )
     }
 }
