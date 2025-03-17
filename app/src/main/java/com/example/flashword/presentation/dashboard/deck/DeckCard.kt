@@ -39,7 +39,7 @@ import com.example.flashword.ui.theme.md_theme_light_success
 fun DeckCard(
     cardSet: DeckState,
     onClick: () -> Unit = {},
-    onAddClick: () -> Unit = {},
+    onAddClick: (String) -> Unit = {},
 ) {
     Box(
         modifier = Modifier
@@ -86,7 +86,7 @@ fun DeckCard(
                         color = MaterialTheme.colorScheme.onBackground
                     )
 
-                    IconButton(onClick = onAddClick) {
+                    IconButton(onClick = { onAddClick(cardSet.deckId) }) {
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Add",
@@ -148,12 +148,12 @@ fun DeckCard(
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun CardSetItemPreview() {
-    FlashWordTheme {
-        DeckCard(
-            DeckState("English verbs", 81, 12, 8, 35, 0.7f, 45)
-        )
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun CardSetItemPreview() {
+//    FlashWordTheme {
+//        DeckCard(
+//            DeckState("English verbs", 81, 12, 8, 35, 0.7f, 45)
+//        )
+//    }
+//}

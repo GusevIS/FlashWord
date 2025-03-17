@@ -1,6 +1,5 @@
 package com.example.flashword.presentation.dashboard
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle

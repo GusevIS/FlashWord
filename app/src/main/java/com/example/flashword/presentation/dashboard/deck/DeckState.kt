@@ -1,6 +1,8 @@
 package com.example.flashword.presentation.dashboard.deck
 
 data class DeckState(
+    val userId: String,
+    val deckId: String,
     val title: String = "TestDeck",
     val totalCards: Int = 0,
     val newCards: Int = 0,

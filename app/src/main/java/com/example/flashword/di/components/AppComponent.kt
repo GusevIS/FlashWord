@@ -5,12 +5,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.flashword.MainActivity
 import com.example.flashword.data.remote.AccountServiceImpl
+import com.example.flashword.data.remote.CardsRepositoryImpl
+import com.example.flashword.data.remote.DecksRepositoryImpl
 import com.example.flashword.di.AppContext
 import com.example.flashword.di.AppScope
 import com.example.flashword.di.MultiViewModelFactory
 import com.example.flashword.di.ViewModelClassKey
 import com.example.flashword.di.modules.UserPreferencesModule
 import com.example.flashword.domain.repos.AccountService
+import com.example.flashword.domain.repos.CardsRepository
+import com.example.flashword.domain.repos.DecksRepository
 import com.example.flashword.domain.user_data.UserManager
 import com.example.flashword.presentation.addcard.AddCardViewModel
 import com.example.flashword.presentation.appstate.AuthViewModel
@@ -41,6 +45,7 @@ interface AppComponent {
 
     val viewModelFactory: MultiViewModelFactory
 
+    fun addCardViewModelFactory(): AddCardViewModel.AddCardViewModelFactory.Factory
 
 
 }
@@ -87,10 +92,6 @@ interface ViewModelBindsModule {
     @[IntoMap ViewModelClassKey(ProfileViewModel::class)]
     fun bindsProfileViewModel(viewModel: ProfileViewModel): ViewModel
 
-    @Binds
-    @[IntoMap ViewModelClassKey(AddCardViewModel::class)]
-    fun bindsAddCardViewModel(viewModel: AddCardViewModel): ViewModel
-
 //    @Binds
 //    @[IntoMap ViewModelClassKey(StatisticsViewModel::class)]
 //    fun bindsStatisticsViewModel(viewModel: StatisticsViewModel): ViewModel
@@ -100,6 +101,12 @@ interface ViewModelBindsModule {
 abstract class AppsBinds {
     @Binds
     abstract fun bindsAccountService(service: AccountServiceImpl): AccountService
+
+    @Binds
+    abstract fun bindsDecksRepository(repo: DecksRepositoryImpl): DecksRepository
+
+    @Binds
+    abstract fun bindsCardsRepository(repo: CardsRepositoryImpl): CardsRepository
 }
 
 @Module

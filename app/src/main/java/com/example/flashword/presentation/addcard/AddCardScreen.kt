@@ -1,5 +1,6 @@
 package com.example.flashword.presentation.addcard
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -51,7 +52,7 @@ import com.example.flashword.ui.theme.setStatusBarColor
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCardScreen(
-    state: AddCardState = AddCardState(),
+    state: AddCardState ,
 
     onPopBackClick: () -> Unit,
 
@@ -62,6 +63,7 @@ fun AddCardScreen(
     updateBackText: (String) -> Unit = {},
 ) {
     setStatusBarColor(MaterialTheme.colorScheme.background.toArgb())
+
 
     Column {
         CenterAlignedTopAppBar (

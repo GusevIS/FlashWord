@@ -5,16 +5,20 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.example.flashword.presentation.addcard.AddCardViewModel
 import com.example.flashword.presentation.appstate.AppState
 import com.example.flashword.presentation.appstate.rememberAppState
 import com.example.flashword.presentation.login.LoginScreen
@@ -34,10 +38,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as FlashWordApp).appComponent.inject(this)
         super.onCreate(savedInstanceState)
-
-        val fs = Firebase.firestore
-        fs.collection("decks")
-            .document().set(mapOf("user" to "hui"))
 
         //enableEdgeToEdge()
 
@@ -64,12 +64,15 @@ fun FlashWordContent(
             }
 
             val appState = rememberAppState(viewModel(factory = getViewModelFactory()))
+            //val LocalAppState = compositionLocalOf { appState }
+            //CompositionLocalProvider(LocalAppState provides appState) {
+                AppNavHost(
+                    navController = appState.navHostController,
+                    getViewModelFactory = getViewModelFactory,
+                    appState = appState
+                )
+            //}
 
-            AppNavHost(
-                navController = appState.navHostController,
-                getViewModelFactory = getViewModelFactory,
-                appState = appState
-            )
 
         }
     }

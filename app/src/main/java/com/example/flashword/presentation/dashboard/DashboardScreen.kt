@@ -1,5 +1,6 @@
 package com.example.flashword.presentation.dashboard
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -60,9 +61,9 @@ import com.example.flashword.ui.theme.setStatusBarColor
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
-    state: DashboardUiState = DashboardUiState(),
+    state: DashboardUiState,
     onReviewAllClick: () -> Unit = {},
-    onAddCardClick: () -> Unit = {},
+    onAddCardClick: (String) -> Unit = {},
     onAddDeckClick: (String) -> Unit = {},
 ) {
     setStatusBarColor(MaterialTheme.colorScheme.background.toArgb())
@@ -80,7 +81,7 @@ fun DashboardScreenContent(
     modifier: Modifier = Modifier,
     state: DashboardUiState,
     onReviewAllClick: () -> Unit = {},
-    onAddCardClick: () -> Unit = {},
+    onAddCardClick: (String) -> Unit = {},
     onAddDeckClick: (String) -> Unit = {},
 ) {
     var showAddDeckDialog by remember { mutableStateOf(false) }
@@ -97,7 +98,7 @@ fun DashboardScreenContent(
 
     var searchQuery by remember { mutableStateOf("") }
 
-    val filteredCardDecks = remember(searchQuery) {
+    val filteredCardDecks = remember(searchQuery, state) {
         state.cardDecks.filter { it.title.contains(searchQuery, ignoreCase = true) }
     }
 
