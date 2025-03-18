@@ -1,8 +1,6 @@
 package com.example.flashword.presentation.dashboard
 
-import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,7 +30,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults.colors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -63,7 +60,7 @@ fun DashboardScreen(
     modifier: Modifier = Modifier,
     state: DashboardUiState,
     onReviewAllClick: () -> Unit = {},
-    onAddCardClick: (String) -> Unit = {},
+    onAddCardClick: (String, String) -> Unit = { _: String, _: String -> },
     onAddDeckClick: (String) -> Unit = {},
 ) {
     setStatusBarColor(MaterialTheme.colorScheme.background.toArgb())
@@ -81,7 +78,7 @@ fun DashboardScreenContent(
     modifier: Modifier = Modifier,
     state: DashboardUiState,
     onReviewAllClick: () -> Unit = {},
-    onAddCardClick: (String) -> Unit = {},
+    onAddCardClick: (String, String) -> Unit = { _: String, _: String -> },
     onAddDeckClick: (String) -> Unit = {},
 ) {
     var showAddDeckDialog by remember { mutableStateOf(false) }

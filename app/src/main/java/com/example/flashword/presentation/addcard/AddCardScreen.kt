@@ -64,7 +64,6 @@ fun AddCardScreen(
 ) {
     setStatusBarColor(MaterialTheme.colorScheme.background.toArgb())
 
-
     Column {
         CenterAlignedTopAppBar (
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(

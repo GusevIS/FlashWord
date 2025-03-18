@@ -1,7 +1,5 @@
 package com.example.flashword.presentation.addcard
 
-import android.util.Log
-import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
@@ -12,19 +10,18 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.example.flashword.FlashWordApp
-import com.example.flashword.presentation.dashboard.DashboardScreen
-import com.example.flashword.presentation.dashboard.DashboardViewModel
 import com.example.flashword.presentation.navigation.Destination
 import com.example.flashword.presentation.navigation.navigateSingleTopTo
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class AddCardScreen(
-    val deckId: String
+    val deckId: String,
+    val deckTitle: String
 ): Destination
 
-fun NavHostController.navigateToAddCard(deckId: String) {
-    this.navigateSingleTopTo(AddCardScreen(deckId))
+fun NavHostController.navigateToAddCard(deckId: String, deckTitle: String) {
+    this.navigateSingleTopTo(AddCardScreen(deckId, deckTitle))
 }
 
 fun NavGraphBuilder.addCardDestination(
@@ -33,8 +30,9 @@ fun NavGraphBuilder.addCardDestination(
 ) {
     composable<AddCardScreen> { backStackEntry ->
         val deckId = backStackEntry.toRoute<AddCardScreen>().deckId
+        val deckTitle = backStackEntry.toRoute<AddCardScreen>().deckTitle
         val factory = (LocalContext.current.applicationContext as FlashWordApp).appComponent.addCardViewModelFactory()
-        val viewModel: AddCardViewModel = viewModel(factory = factory.create(deckId))
+        val viewModel: AddCardViewModel = viewModel(factory = factory.create(deckId, deckTitle))
 
         val state by viewModel.state.collectAsStateWithLifecycle()
 

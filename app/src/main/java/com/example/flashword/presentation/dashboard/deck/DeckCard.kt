@@ -39,7 +39,7 @@ import com.example.flashword.ui.theme.md_theme_light_success
 fun DeckCard(
     cardSet: DeckState,
     onClick: () -> Unit = {},
-    onAddClick: (String) -> Unit = {},
+    onAddClick: (String, String) -> Unit = { _: String, _: String -> },
 ) {
     Box(
         modifier = Modifier
@@ -86,7 +86,7 @@ fun DeckCard(
                         color = MaterialTheme.colorScheme.onBackground
                     )
 
-                    IconButton(onClick = { onAddClick(cardSet.deckId) }) {
+                    IconButton(onClick = { onAddClick(cardSet.deckId, cardSet.title) }) {
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Add",
