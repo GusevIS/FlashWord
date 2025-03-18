@@ -14,8 +14,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DashboardViewModel @Inject constructor(
-    private val accountService: AccountService,
-    //private val decksRepository: DecksRepository,
     private val addNewDeckUseCase: AddNewDeckUseCase,
     private val observeDecksUseCase: ObserveDecksUseCase,
 ): FlashAppViewModel() {
@@ -61,7 +59,7 @@ class DashboardViewModel @Inject constructor(
 
     fun addDeck(title: String) {
         launchCatching {
-            addNewDeckUseCase(accountService.currentUserId, title)
+            addNewDeckUseCase(title)
         }
     }
 }
