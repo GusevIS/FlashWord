@@ -71,4 +71,9 @@
     <!--Add card-->
     <string name="enter_front_desc">enter the front of the card</string>
     <string name="enter_back_desc">enter the back of the card</string>
+
+    <!--Studying card-->
+    <string name="wrong">Wrong</string>
+    <string name="hard">Hard</string>
+    <string name="easy">Easy</string>
 </resources>

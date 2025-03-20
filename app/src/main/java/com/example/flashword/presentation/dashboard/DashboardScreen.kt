@@ -62,6 +62,7 @@ fun DashboardScreen(
     onReviewAllClick: () -> Unit = {},
     onAddCardClick: (String, String) -> Unit = { _: String, _: String -> },
     onAddDeckClick: (String) -> Unit = {},
+    onDeckClick: (String, String) -> Unit = { _: String, _: String -> },
 ) {
     setStatusBarColor(MaterialTheme.colorScheme.background.toArgb())
 
@@ -70,6 +71,7 @@ fun DashboardScreen(
         onReviewAllClick = onReviewAllClick,
         onAddCardClick = onAddCardClick,
         onAddDeckClick = onAddDeckClick,
+        onDeckClick = onDeckClick
     )
 }
 
@@ -80,6 +82,7 @@ fun DashboardScreenContent(
     onReviewAllClick: () -> Unit = {},
     onAddCardClick: (String, String) -> Unit = { _: String, _: String -> },
     onAddDeckClick: (String) -> Unit = {},
+    onDeckClick: (String, String) -> Unit = { _: String, _: String -> }
 ) {
     var showAddDeckDialog by remember { mutableStateOf(false) }
 
@@ -221,6 +224,7 @@ fun DashboardScreenContent(
                 items(filteredCardDecks) { cardDeck ->
                     DeckCard(
                         cardDeck,
+                        onClick = onDeckClick,
 
                         onAddClick = onAddCardClick
                         )

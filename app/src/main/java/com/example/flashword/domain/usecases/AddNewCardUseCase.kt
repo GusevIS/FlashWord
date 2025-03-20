@@ -1,5 +1,6 @@
 package com.example.flashword.domain.usecases
 
+import com.example.flashword.domain.model.CardCreateModel
 import com.example.flashword.domain.model.CardModel
 import com.example.flashword.domain.model.CardStatus
 import com.example.flashword.domain.repos.CardsRepository
@@ -12,14 +13,14 @@ class AddNewCardUseCase @Inject constructor(
 ) {
     suspend fun execute(deckId: String, frontText: String, backText: String) {
         val createdAt = System.currentTimeMillis()
-        val card = CardModel(
+        val card = CardCreateModel(
             deckId = deckId,
             frontText = frontText,
             backText = backText,
             createdAt = createdAt,
             lastReviewAt = createdAt,
             nextReviewAt = createdAt,
-            status = CardStatus.NEW
+            wasForgotten = false
         )
         return withContext(Dispatchers.IO) {
             addCardsRepository.addCard(card)

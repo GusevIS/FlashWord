@@ -1,6 +1,6 @@
 package com.example.flashword.domain.model
 
-data class CardModel(
+data class CardCreateModel(
     val deckId: String,
     val frontText: String,
     val backText: String,
@@ -9,7 +9,24 @@ data class CardModel(
     val lastReviewAt: Long,
     val nextReviewAt: Long,
 
-    val status: CardStatus
+    val wasForgotten: Boolean,
+
+    //val status: CardStatus
+
+)
+
+data class CardModel(
+    var cardId: String = "",
+    val deckId: String,
+    val frontText: String,
+    val backText: String,
+
+    val createdAt: Long,
+    val lastReviewAt: Long,
+    val nextReviewAt: Long,
+
+    val wasForgotten: Boolean,
+    //val status: CardStatus
 
 )
 

@@ -1,6 +1,7 @@
 package com.example.flashword.data.source
 
 import android.util.Log
+import com.example.flashword.data.model.CardCreateDto
 import com.example.flashword.data.model.CardDto
 import com.example.flashword.data.model.DeckCreateDto
 import com.example.flashword.data.model.DeckDto
@@ -69,13 +70,35 @@ class FirestoreDataSource @Inject constructor(
         decksCollection.add(deck).await()
     }
 
-    suspend fun addCard(card: CardDto) {
+    fun addCard(card: CardCreateDto) {
         decksCollection
             .document(card.deckId)
             .collection("cards")
             .add(card)
             .addOnSuccessListener { documentReference ->
                 Log.d(FIRESTORE_LOG, "Card added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.e(FIRESTORE_LOG, e.toString())
+            }
+    }
+
+    fun updateCard(card: CardDto) {
+        val updatedCards = hashMapOf<String, Any>(
+            "frontText" to card.frontText,
+            "backText" to card.backText,
+            "lastReviewAt" to card.lastReviewAt,
+            "nextReviewAt" to card.nextReviewAt,
+            "wasForgotten" to card.wasForgotten
+        )
+
+        decksCollection
+            .document(card.deckId)
+            .collection("cards")
+            .document(card.cardId)
+            .update(updatedCards)
+            .addOnSuccessListener {
+                Log.d(FIRESTORE_LOG, "Card updated with ID: ${card.cardId}")
             }
             .addOnFailureListener { e ->
                 Log.e(FIRESTORE_LOG, e.toString())
@@ -89,7 +112,13 @@ class FirestoreDataSource @Inject constructor(
                 .get()
                 .await()
 
-            snapshot.documents.mapNotNull { it.toObject(CardDto::class.java) }
+            snapshot.documents.mapNotNull {
+                val card = it.toObject(CardDto::class.java)
+                if (card != null) {
+                    card.cardId = it.id
+                    card
+                } else null
+            }
         } catch (e: Exception) {
             Log.e(FIRESTORE_LOG, e.toString())
             emptyList()

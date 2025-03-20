@@ -11,6 +11,7 @@ import com.example.flashword.presentation.addcard.navigateToAddCard
 import com.example.flashword.presentation.navigation.Destination
 import kotlinx.serialization.Serializable
 import com.example.flashword.presentation.navigation.navigateSingleTopTo
+import com.example.flashword.presentation.studying_cards.navigateToStudyingCards
 
 @Serializable
 object DashboardScreen: Destination
@@ -30,6 +31,7 @@ fun NavGraphBuilder.dashboardDestination(
         DashboardScreen(
             state = state,
             onAddCardClick = navController::navigateToAddCard,
+            onDeckClick = navController::navigateToStudyingCards,
             onReviewAllClick = {},
             onAddDeckClick = viewModel::addDeck,
         )

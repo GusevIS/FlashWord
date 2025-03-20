@@ -38,7 +38,7 @@ import com.example.flashword.ui.theme.md_theme_light_success
 @Composable
 fun DeckCard(
     cardSet: DeckState,
-    onClick: () -> Unit = {},
+    onClick: (String, String) -> Unit = { _: String, _: String -> },
     onAddClick: (String, String) -> Unit = { _: String, _: String -> },
 ) {
     Box(
@@ -63,7 +63,7 @@ fun DeckCard(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
+                .clickable(onClick = { onClick(cardSet.deckId, cardSet.title) })
                 .zIndex(1f),
             shape = MaterialTheme.shapes.medium,
             colors = CardDefaults.cardColors(

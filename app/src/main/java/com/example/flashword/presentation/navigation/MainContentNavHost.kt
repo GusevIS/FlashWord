@@ -42,6 +42,7 @@ import com.example.flashword.presentation.profile.profileDestination
 import com.example.flashword.presentation.profile.profileNavGraph
 import com.example.flashword.presentation.statistics.StatisticsScreen
 import com.example.flashword.presentation.statistics.statisticsDestination
+import com.example.flashword.presentation.studying_cards.StudyingCardsScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -70,7 +71,6 @@ data class TopLevelDestination(
     val unselectedIcon: ImageVector,
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContentNavHost(
     getViewModelFactory: () -> ViewModelProvider.Factory,
@@ -93,8 +93,6 @@ fun MainContentNavHost(
 
     val navBackStackEntry by mainContentNavController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    //showBottomBar = navBackStackEntry?.destination?.hasRoute(DashboardScreen::class) == true
-    //Log.d("aeegrea", navBackStackEntry?.destination?.route.toString() + "-----" + DashboardScreen::class.toString() + "------"+showBottomBar)
     if (currentDestination != null) {
         when {
             currentDestination.hasRoute(DashboardScreen::class)
@@ -103,7 +101,8 @@ fun MainContentNavHost(
                 showBottomBar = true
                 showTopBar = false
             }
-            currentDestination.hasRoute(AddCardScreen::class) -> {
+            currentDestination.hasRoute(AddCardScreen::class) or
+                    currentDestination.hasRoute(StudyingCardsScreen::class)-> {
                 showBottomBar = false
                 showTopBar = true
             }
@@ -113,12 +112,6 @@ fun MainContentNavHost(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-
-        topBar = {
-            if (showTopBar) {
-
-            }
-        },
 
         bottomBar = {
 

@@ -23,6 +23,7 @@ import com.example.flashword.presentation.login.LoginViewModel
 import com.example.flashword.presentation.profile.ProfileViewModel
 import com.example.flashword.presentation.registration.RegistrationViewModel
 import com.example.flashword.presentation.splash.SplashViewModel
+import com.example.flashword.presentation.studying_cards.StudyingCardsViewModel
 import dagger.Binds
 import dagger.BindsInstance
 import dagger.Component
@@ -46,6 +47,7 @@ interface AppComponent {
     val viewModelFactory: MultiViewModelFactory
 
     fun addCardViewModelFactory(): AddCardViewModel.AddCardViewModelFactory.Factory
+    fun studyingCardsViewModelFactory(): StudyingCardsViewModel.StudyingCardsViewModelFactory.Factory
 
 
 }

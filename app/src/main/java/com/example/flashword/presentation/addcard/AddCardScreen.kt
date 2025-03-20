@@ -231,20 +231,22 @@ fun ExpandingBasicTextField(
     onTextChanged: (String) -> Unit,
     minHeight: Int = 168,
 ) {
-    //var text by remember { mutableStateOf("") }
+
 
     BasicTextField(
         value = text,
-        onValueChange = onTextChanged,
+        onValueChange = {
+            onTextChanged(it)
+                        },
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White, shape = RoundedCornerShape(8.dp))
             .padding(8.dp)
-            .heightIn(min = minHeight.dp), // Минимальная высота
+            .heightIn(min = minHeight.dp),
         textStyle = androidx.compose.ui.text.TextStyle(fontSize = 16.sp),
-        maxLines = Int.MAX_VALUE, // Неограниченное число строк
+        maxLines = Int.MAX_VALUE,
         keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Default // Позволяет вводить новые строки
+            imeAction = ImeAction.Default
         ),
         decorationBox = { innerTextField ->
             Box(

@@ -1,10 +1,12 @@
 package com.example.flashword.data.model
 
+import android.util.Log
+import com.example.flashword.domain.model.CardCreateModel
 import com.example.flashword.domain.model.CardModel
 import com.example.flashword.domain.model.CardStatus
 import com.google.firebase.Timestamp
 
-data class CardDto(
+data class CardCreateDto(
     val deckId: String = "",
     val frontText: String = "",
     val backText: String = "",
@@ -13,48 +15,96 @@ data class CardDto(
     val lastReviewAt: Timestamp = Timestamp.now(),
     val nextReviewAt: Timestamp = Timestamp.now(),
 
-    val status: String = "",
+    val wasForgotten: Boolean = false,
 )
 
-fun CardModel.toCardDto() =
-    CardDto(
+data class CardDto(
+    var cardId: String = "",
+    val deckId: String = "",
+    val frontText: String = "",
+    val backText: String = "",
+
+    val createdAt: Timestamp = Timestamp.now(),
+    val lastReviewAt: Timestamp = Timestamp.now(),
+    val nextReviewAt: Timestamp = Timestamp.now(),
+
+    val wasForgotten: Boolean = false,
+)
+
+fun CardCreateModel.toCardCreateDto(): CardCreateDto {
+    return CardCreateDto(
         deckId = deckId,
-        frontText = frontText,
-        backText = backText,
+        frontText = frontText.replace("\n", "\\n"),
+        backText = backText.replace("\n", "\\n"),
         createdAt = createdAt.toTimestamp(),
         lastReviewAt = lastReviewAt.toTimestamp(),
         nextReviewAt = nextReviewAt.toTimestamp(),
-        status = when (status) {
-            CardStatus.NEW -> "NEW"
-            CardStatus.LEARNING -> "LEARNING"
-            CardStatus.REVIEWING -> "REVIEWING"
-            CardStatus.MASTERED -> "MASTERED"
-            CardStatus.FORGOTTEN -> "FORGOTTEN"
-        }
+        wasForgotten = wasForgotten
+//        status = when (status) {
+//            CardStatus.NEW -> "NEW"
+//            CardStatus.LEARNING -> "LEARNING"
+//            CardStatus.REVIEWING -> "REVIEWING"
+//            CardStatus.MASTERED -> "MASTERED"
+//            CardStatus.FORGOTTEN -> "FORGOTTEN"
+//        }
     )
+}
 
-fun CardDto.toCardModel() =
-    CardModel(
+fun CardCreateDto.toCardCreateModel() =
+    CardCreateModel(
         deckId = deckId,
-        frontText = frontText,
-        backText = backText,
+        frontText = frontText.replace("\\n", "\n"),
+        backText = backText.replace("\\n", "\n"),
         createdAt = createdAt.toLong(),
         lastReviewAt = lastReviewAt.toLong(),
         nextReviewAt = nextReviewAt.toLong(),
-        status = when (status) {
-            "NEW" -> CardStatus.NEW
-            "LEARNING" -> CardStatus.LEARNING
-            "REVIEWING" -> CardStatus.REVIEWING
-            "MASTERED" -> CardStatus.MASTERED
-            "FORGOTTEN" -> CardStatus.FORGOTTEN
-            else -> CardStatus.NEW
-        }
+        wasForgotten = wasForgotten
+//        status = when (status) {
+//            "NEW" -> CardStatus.NEW
+//            "LEARNING" -> CardStatus.LEARNING
+//            "REVIEWING" -> CardStatus.REVIEWING
+//            "MASTERED" -> CardStatus.MASTERED
+//            "FORGOTTEN" -> CardStatus.FORGOTTEN
+//            else -> CardStatus.NEW
+//        }
     )
 
-enum class CardStatus {
-    NEW,        // Just added
-    LEARNING,   // In the process of memorization
-    REVIEWING,  // Repeated with increasing intervals
-    MASTERED,   // Remembered
-    FORGOTTEN   // Forgotten, returned to the learning process
+fun CardModel.toCardDto(): CardDto {
+    return CardDto(
+        cardId = cardId,
+        deckId = deckId,
+        frontText = frontText.replace("\n", "\\n"),
+        backText = backText.replace("\n", "\\n"),
+        createdAt = createdAt.toTimestamp(),
+        lastReviewAt = lastReviewAt.toTimestamp(),
+        nextReviewAt = nextReviewAt.toTimestamp(),
+        wasForgotten = wasForgotten
+//        status = when (status) {
+//            CardStatus.NEW -> "NEW"
+//            CardStatus.LEARNING -> "LEARNING"
+//            CardStatus.REVIEWING -> "REVIEWING"
+//            CardStatus.MASTERED -> "MASTERED"
+//            CardStatus.FORGOTTEN -> "FORGOTTEN"
+//        }
+    )
 }
+
+fun CardDto.toCardModel() =
+    CardModel(
+        cardId = cardId,
+        deckId = deckId,
+        frontText = frontText.replace("\\n", "\n"),
+        backText = backText.replace("\\n", "\n"),
+        createdAt = createdAt.toLong(),
+        lastReviewAt = lastReviewAt.toLong(),
+        nextReviewAt = nextReviewAt.toLong(),
+        wasForgotten = wasForgotten
+//        status = when (status) {
+//            "NEW" -> CardStatus.NEW
+//            "LEARNING" -> CardStatus.LEARNING
+//            "REVIEWING" -> CardStatus.REVIEWING
+//            "MASTERED" -> CardStatus.MASTERED
+//            "FORGOTTEN" -> CardStatus.FORGOTTEN
+//            else -> CardStatus.NEW
+//        }
+    )
