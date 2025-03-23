@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -74,12 +75,14 @@ fun StudyingCardsScreen(
     onShowAnswerClick: () -> Unit,
     onPopBackClick: () -> Unit,
 ) {
-    setStatusBarColor(MaterialTheme.colorScheme.background.toArgb())
+    setStatusBarColor(MaterialTheme.colorScheme.surface.toArgb())
 
-    Column {
+    Column(
+        Modifier.background(MaterialTheme.colorScheme.surface)
+    ) {
         CenterAlignedTopAppBar (
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.background,
+                containerColor = MaterialTheme.colorScheme.surface,
                 titleContentColor = MaterialTheme.colorScheme.onBackground
             ),
             title = {
@@ -109,6 +112,7 @@ fun StudyingCardsScreen(
             backText = state.card.backText,
             isBackSide = state.isBackSide,
             reviewingEnded = state.reviewingEnded,
+            cardsReviewed = state.totalCards,
             onRecallClick = onRecallClick,
             onShowAnswerClick = onShowAnswerClick
         )
@@ -122,15 +126,13 @@ fun StudyingCardsScreenContent(
     backText: String,
     isBackSide: Boolean,
     reviewingEnded: Boolean,
+    cardsReviewed: Int = 0,
     onRecallClick: ( RecallQuality) -> Unit,
     onShowAnswerClick: () -> Unit,
 
 ) {
-    LazyColumn {
-
+    LazyColumn(Modifier.background(MaterialTheme.colorScheme.surface)) {
         item {
-
-
             if (reviewingEnded) {
                 val density = LocalDensity.current
                 var isVisible by remember { mutableStateOf(false) }
@@ -139,10 +141,8 @@ fun StudyingCardsScreenContent(
                 AnimatedVisibility(
                     visible = isVisible,
                     enter = slideInVertically {
-                        // Slide in from 40 dp from the top.
                         with(density) { -90.dp.roundToPx() }
                     } + fadeIn(
-                        // Fade in with the initial alpha of 0.3f.
                         initialAlpha = 0.3f
                     ),
                     exit = slideOutVertically() + fadeOut()
@@ -152,7 +152,7 @@ fun StudyingCardsScreenContent(
                             .padding(bottom = 24.dp)
                     ) {
                         StudyingCard() {
-                            StudyingCompletedCard()
+                            StudyingCompletedCard(cardsReviewed)
                         }
                     }
                 }
@@ -195,12 +195,8 @@ fun StudyingCardsScreenContent(
                     }
                 }
             }
-
-
-
         }
     }
-
 }
 
 @Composable
@@ -257,14 +253,14 @@ fun StudyingBackCard(
                 SegmentedButton(
                     shape = SegmentedButtonDefaults.itemShape(
                         index = index,
-                        count = options.size
+                        count = options.size,
                     ),
                     onClick = { onClick(label.first) },
                     selected = false,
-                    label = { Text(label.second) },
+                    label = { Text(label.second, color = MaterialTheme.colorScheme.onBackground) },
                     colors = SegmentedButtonDefaults.colors(
-                        activeContainerColor = color,
-                        inactiveContainerColor = color
+                        activeContainerColor = color.copy(alpha = 0.9f),
+                        inactiveContainerColor = color.copy(alpha = 0.9f)
                     )
                 )
             }
@@ -311,23 +307,46 @@ fun StudyingFrontCard(
 
 @Composable
 fun StudyingCompletedCard(
+    cardsReviewed: Int = 0,
     minHeight: Int = 288,
 ) {
     Column(
         modifier = Modifier
+            .fillMaxWidth()
             .padding(8.dp)
-            .background(Color.White),
+            .background(Color.White)
+            .height(minHeight.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         BasicText(
             modifier = Modifier
-                .padding(8.dp)
-                .heightIn(min = minHeight.dp)
                 .background(Color.White, shape = RoundedCornerShape(8.dp))
                 .align(Alignment.CenterHorizontally),
             text = stringResource(R.string.reviewing_ended),
-            style = TextStyle(fontSize = 36.sp)
+            style = TextStyle(fontSize = 26.sp,
+                color = MaterialTheme.colorScheme.error,
+                fontWeight = FontWeight.Bold
+            )
+        )
+        BasicText(
+            modifier = Modifier
+                .padding(8.dp)
+                .background(Color.White, shape = RoundedCornerShape(8.dp))
+                .align(Alignment.CenterHorizontally),
+            text = stringResource(R.string.well_done),
+            style = TextStyle(fontSize = 26.sp,
+                color = MaterialTheme.colorScheme.error,
+                fontWeight = FontWeight.Bold
+            )
+        )
+        BasicText(
+            modifier = Modifier
+                .padding(8.dp)
+                .background(Color.White, shape = RoundedCornerShape(8.dp))
+                .align(Alignment.CenterHorizontally),
+            text = stringResource(R.string.you_reviewed, cardsReviewed),
+            style = TextStyle(fontSize = 18.sp, color = MaterialTheme.colorScheme.onBackground)
         )
     }
 }
@@ -340,7 +359,9 @@ fun DeckProgressBar(
         progress = { currentProgress },
         modifier = Modifier
             .fillMaxWidth()
+            .height(24.dp)
             .padding(8.dp),
+        trackColor = Color.White,
         color = MaterialTheme.colorScheme.error,
         gapSize = (-15).dp,
         drawStopIndicator = {}

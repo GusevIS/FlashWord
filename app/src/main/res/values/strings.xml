@@ -76,5 +76,7 @@
     <string name="wrong">Wrong</string>
     <string name="hard">Hard</string>
     <string name="easy">Easy</string>
-    <string name="reviewing_ended">All cards reviewed! Well done!</string>
+    <string name="reviewing_ended">All cards reviewed!</string>
+    <string name="well_done">Well done!</string>
+    <string name="you_reviewed">You reviewed %1$s cards</string>
 </resources>

@@ -9,4 +9,5 @@ data class StudyingCardsState(
     val card: CardModel = CardModel("", deckId, "", "", 0L, 0L, 0L, false),
     val reviewingEnded: Boolean = false,
     val progress: Float = 0f,
+    val totalCards: Int = 0,
     )

@@ -34,6 +34,7 @@ class StudyingCardsViewModel (
     init {
         viewModelScope.launch {
             cards = getCardsForReviewUseCase(deckId).shuffled()
+            _state.value = _state.value.copy(totalCards = cards.size)
             onNextCard()
 
         }
@@ -42,7 +43,7 @@ class StudyingCardsViewModel (
     private fun onNextCard() {
         if (cardIndex < cards.lastIndex) {
             _state.value = _state.value.copy(card = cards[++cardIndex], progress = cardIndex / cards.size.toFloat(), isBackSide = false)
-        } else _state.value = _state.value.copy(reviewingEnded = true, isBackSide = false)
+        } else _state.value = _state.value.copy(reviewingEnded = true, isBackSide = false, progress = 1f)
 
     }
 
