@@ -1,24 +1,32 @@
 package com.example.flashword.presentation.studying_cards
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,17 +35,17 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,127 +53,180 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.flashword.R
-import com.example.flashword.domain.model.CardModel
 import com.example.flashword.domain.usecases.RecallQuality
-import com.example.flashword.presentation.addcard.ExpandingBasicTextField
-import com.example.flashword.ui.theme.FlashWordTheme
 import com.example.flashword.ui.theme.md_theme_light_success
 import com.example.flashword.ui.theme.setStatusBarColor
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudyingCardsScreen(
     state: StudyingCardsState,
-    onClick: (RecallQuality) -> Unit,
-
+    onRecallClick: (RecallQuality) -> Unit,
+    onShowAnswerClick: () -> Unit,
+    onPopBackClick: () -> Unit,
 ) {
     setStatusBarColor(MaterialTheme.colorScheme.background.toArgb())
 
-    val text: String = if (state.cards.isEmpty()) "" else {
-        if (state.isBackSide) state.cards.first().backText
-        else state.cards.first().frontText
+    Column {
+        CenterAlignedTopAppBar (
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                titleContentColor = MaterialTheme.colorScheme.onBackground
+            ),
+            title = {
+                Text(
+                    text = state.deckTitle,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+
+            },
+            navigationIcon = {
+                IconButton(onClick = onPopBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Localized description",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+        )
+
+        DeckProgressBar(state.progress)
+
+        StudyingCardsScreenContent(
+            frontText = state.card.frontText,
+            backText = state.card.backText,
+            isBackSide = state.isBackSide,
+            reviewingEnded = state.reviewingEnded,
+            onRecallClick = onRecallClick,
+            onShowAnswerClick = onShowAnswerClick
+        )
     }
-    StudyingCardsScreenContent(
-        text = text,
-        onClick = onClick
-    )
-
-
 
 }
 
 @Composable
 fun StudyingCardsScreenContent(
-    text: String,
-
-    onClick: ( RecallQuality) -> Unit,
+    frontText: String,
+    backText: String,
+    isBackSide: Boolean,
+    reviewingEnded: Boolean,
+    onRecallClick: ( RecallQuality) -> Unit,
+    onShowAnswerClick: () -> Unit,
 
 ) {
     LazyColumn {
 
         item {
 
-//            val animatedRotation by animateFloatAsState(
-//                targetValue = if (isBackSide) 180f else 0f,
-//                animationSpec = tween(durationMillis = 1200),
-//                label = "flip_animation"
-//            )
 
-            Box(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .graphicsLayer {
-//                        rotationY = animatedRotation
-//                        cameraDistance = 24 * density
-//                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Card(
-                    description = stringResource(R.string.enter_front_desc),
-                    text = text,
-                    onClick = onClick //updateFrontText
-                )
-//                if (animatedRotation <= 90f) {
-//                    Card(
-//                        description = stringResource(R.string.enter_front_desc),
-//                        text = "test front text",
-//                        onTextChanged = updateFrontText
-//                    )
-//                } else {
-//                    Card(
-//                        description = stringResource(R.string.enter_back_desc),
-//                        modifier = Modifier.graphicsLayer { scaleX = -1f },
-//                        text = backText,
-//                        onTextChanged = updateBackText
-//                    )
-//                }
+            if (reviewingEnded) {
+                val density = LocalDensity.current
+                var isVisible by remember { mutableStateOf(false) }
+
+                LaunchedEffect(Unit) { isVisible = true }
+                AnimatedVisibility(
+                    visible = isVisible,
+                    enter = slideInVertically {
+                        // Slide in from 40 dp from the top.
+                        with(density) { -90.dp.roundToPx() }
+                    } + fadeIn(
+                        // Fade in with the initial alpha of 0.3f.
+                        initialAlpha = 0.3f
+                    ),
+                    exit = slideOutVertically() + fadeOut()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .padding(bottom = 24.dp)
+                    ) {
+                        StudyingCard() {
+                            StudyingCompletedCard()
+                        }
+                    }
+                }
+            } else {
+                AnimatedContent(
+                    frontText,
+                    transitionSpec = {
+                        slideInHorizontally { width -> width } + fadeIn() togetherWith
+                                slideOutHorizontally { width -> -width } + fadeOut()
+                    },
+                    label = "animated content"
+                ) { targetText ->
+
+                    val animatedRotation by animateFloatAsState(
+                        targetValue = if (isBackSide) 180f else 0f,
+                        animationSpec = tween(durationMillis = 1200),
+                        label = "flip_animation"
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .graphicsLayer {
+                                rotationY = animatedRotation
+                                cameraDistance = 32 * density
+                            }
+                            .padding(bottom = 24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (animatedRotation <= 90f) {
+                            StudyingCard() {
+                                StudyingFrontCard(targetText, onShowAnswerClick)
+                            }
+                        } else {
+                            StudyingCard(
+                                modifier = Modifier.graphicsLayer { scaleX = -1f },
+                            ) {
+                                StudyingBackCard(backText, onRecallClick)
+                            }
+                        }
+                    }
+                }
             }
+
+
+
         }
     }
 
 }
 
 @Composable
-fun Card(
+fun StudyingCard(
     modifier: Modifier = Modifier,
-    description: String = "",
-    text: String,
-    onClick: (RecallQuality) -> Unit,
-
+    content: @Composable ColumnScope.() -> Unit,
     ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.White),
         modifier = modifier
             .padding(8.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(bottom = 24.dp),
         elevation = CardDefaults.cardElevation(12.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
-
-        StudyingCard(
-            text = text,
-            onClick = onClick
-        )
-
-
+        Column(content = content)
     }
 }
 
 @Composable
-fun StudyingCard(
+fun StudyingBackCard(
     text: String,
     onClick: (RecallQuality) -> Unit,
     minHeight: Int = 288,
 ) {
-    var selectedIndex by remember { mutableIntStateOf(0) }
     val options = listOf(RecallQuality.WRONG to stringResource(R.string.wrong),
         RecallQuality.HARD to stringResource(R.string.hard),
         RecallQuality.EASY to stringResource(R.string.easy))
@@ -209,7 +270,88 @@ fun StudyingCard(
             }
         }
     }
+}
 
 
+@Composable
+fun StudyingFrontCard(
+    text: String,
+    onShowAnswerClick: () -> Unit,
+    minHeight: Int = 288,
+) {
+    Column(
+        modifier = Modifier
+            .padding(8.dp)
+            .background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        BasicText(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+                .heightIn(min = minHeight.dp)
+                .background(Color.White, shape = RoundedCornerShape(8.dp)),
+            text = text,
+            style = TextStyle(fontSize = 22.sp)
+        )
+
+        ElevatedButton(
+            onClick = onShowAnswerClick,
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+            elevation = ButtonDefaults.buttonElevation(8.dp)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.baseline_360_24),
+                contentDescription = "rotate",
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        }
+    }
+}
+
+@Composable
+fun StudyingCompletedCard(
+    minHeight: Int = 288,
+) {
+    Column(
+        modifier = Modifier
+            .padding(8.dp)
+            .background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        BasicText(
+            modifier = Modifier
+                .padding(8.dp)
+                .heightIn(min = minHeight.dp)
+                .background(Color.White, shape = RoundedCornerShape(8.dp))
+                .align(Alignment.CenterHorizontally),
+            text = stringResource(R.string.reviewing_ended),
+            style = TextStyle(fontSize = 36.sp)
+        )
+    }
+}
+
+@Composable
+fun DeckProgressBar(
+    currentProgress: Float,
+) {
+    LinearProgressIndicator(
+        progress = { currentProgress },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        color = MaterialTheme.colorScheme.error,
+        gapSize = (-15).dp,
+        drawStopIndicator = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DeckProgressBarPreview() {
+    DeckProgressBar(
+       0.8f
+    )
 
 }

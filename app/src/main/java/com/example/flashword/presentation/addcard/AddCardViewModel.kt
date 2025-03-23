@@ -40,6 +40,13 @@ class AddCardViewModel (
         _state.value = _state.value.copy(isBackSide = !isBackSide)
     }
 
+    fun nextCard() {
+        //TODO
+
+        val isBackSide = _state.value.isBackSide
+        _state.value = _state.value.copy(isBackSide = !isBackSide)
+    }
+
     fun addCard() = with(state.value) {
         launchCatching {
             addNewCardUseCase.execute(deckId, frontText, backText)

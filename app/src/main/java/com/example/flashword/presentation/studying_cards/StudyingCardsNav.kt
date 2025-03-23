@@ -36,10 +36,11 @@ fun NavGraphBuilder.studyingCardsDestination(
 
         val state by viewModel.state.collectAsStateWithLifecycle()
 
-
         StudyingCardsScreen(
             state = state,
-            onClick = { recallQuality -> viewModel.processCardAnswer(state.cards[state.cardIndex], recallQuality) }
+            onPopBackClick = navController::popBackStack,
+            onRecallClick = { recallQuality -> viewModel.processCardAnswer(recallQuality) },
+            onShowAnswerClick = viewModel::rotate
         )
     }
 }

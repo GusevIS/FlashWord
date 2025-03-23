@@ -122,7 +122,6 @@ fun AddCardScreenContent(
     LazyColumn {
 
         item {
-
             val animatedRotation by animateFloatAsState(
                 targetValue = if (isBackSide) 180f else 0f,
                 animationSpec = tween(durationMillis = 1200),
@@ -191,7 +190,6 @@ fun AddCardScreenContent(
                         )
                     }
                 }
-
             }
         }
     }
@@ -231,8 +229,6 @@ fun ExpandingBasicTextField(
     onTextChanged: (String) -> Unit,
     minHeight: Int = 168,
 ) {
-
-
     BasicTextField(
         value = text,
         onValueChange = {

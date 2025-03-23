@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.flashword.FlashAppViewModel
+import com.example.flashword.data.source.FIRESTORE_LOG
 import com.example.flashword.domain.model.CardModel
 import com.example.flashword.domain.usecases.AddNewCardUseCase
 import com.example.flashword.domain.usecases.GetCardsByDeckUseCase
+import com.example.flashword.domain.usecases.GetCardsForReviewUseCase
 import com.example.flashword.domain.usecases.RecallQuality
 import com.example.flashword.domain.usecases.ScheduleNextReviewUseCase
 import dagger.assisted.Assisted
@@ -19,37 +21,53 @@ import kotlinx.coroutines.launch
 
 class StudyingCardsViewModel (
     private val deckId: String,
-    private val deckTitle: String,
-    private val getCardsByDeckUseCase: GetCardsByDeckUseCase,
+    deckTitle: String,
+    private val getCardsForReviewUseCase: GetCardsForReviewUseCase,
     private val scheduleNextReviewUseCase: ScheduleNextReviewUseCase
 ): FlashAppViewModel() {
     private val _state = MutableStateFlow(StudyingCardsState(deckId, deckTitle))
     val state = _state.asStateFlow()
+    private var cards: List<CardModel> = emptyList()
+    private var wrongAnswers: List<CardModel> = emptyList()
+    private var cardIndex: Int = -1
 
     init {
         viewModelScope.launch {
-            _state.value = _state.value.copy(cards = getCardsByDeckUseCase(deckId))
+            cards = getCardsForReviewUseCase(deckId).shuffled()
+            onNextCard()
 
         }
     }
 
-    fun processCardAnswer(card: CardModel, recall: RecallQuality) {
-        Log.d("ewfea", recall.toString())
-        //scheduleNextReviewUseCase(card, recall)
+    private fun onNextCard() {
+        if (cardIndex < cards.lastIndex) {
+            _state.value = _state.value.copy(card = cards[++cardIndex], progress = cardIndex / cards.size.toFloat(), isBackSide = false)
+        } else _state.value = _state.value.copy(reviewingEnded = true, isBackSide = false)
+
+    }
+
+    fun processCardAnswer(recall: RecallQuality) {
+        scheduleNextReviewUseCase(cards[cardIndex], recall)
+        onNextCard()
+    }
+
+    fun rotate() {
+        val isBackSide = _state.value.isBackSide
+        _state.value = _state.value.copy(isBackSide = !isBackSide)
     }
 
 
     class StudyingCardsViewModelFactory @AssistedInject constructor(
         @Assisted("deckId") private val deckId: String,
         @Assisted("deckTitle") private val deckTitle: String,
-        private val getCardsByDeckUseCase: GetCardsByDeckUseCase,
+        private val getCardsForReviewUseCase: GetCardsForReviewUseCase,
         private val scheduleNextReviewUseCase: ScheduleNextReviewUseCase
     ): ViewModelProvider.Factory {
 
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             require(modelClass.isAssignableFrom(StudyingCardsViewModel::class.java))
-            return StudyingCardsViewModel(deckId, deckTitle, getCardsByDeckUseCase, scheduleNextReviewUseCase) as T
+            return StudyingCardsViewModel(deckId, deckTitle, getCardsForReviewUseCase, scheduleNextReviewUseCase) as T
         }
 
         @AssistedFactory

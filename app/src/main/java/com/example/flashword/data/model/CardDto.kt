@@ -20,7 +20,7 @@ data class CardCreateDto(
 
 data class CardDto(
     var cardId: String = "",
-    val deckId: String = "",
+    var deckId: String = "",
     val frontText: String = "",
     val backText: String = "",
 

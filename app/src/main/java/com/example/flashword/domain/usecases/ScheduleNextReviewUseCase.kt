@@ -1,7 +1,8 @@
 package com.example.flashword.domain.usecases
 
+import android.util.Log
+import com.example.flashword.data.source.FIRESTORE_LOG
 import com.example.flashword.domain.model.CardModel
-import com.example.flashword.domain.model.CardStatus
 import com.example.flashword.domain.repos.CardsRepository
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -11,6 +12,7 @@ class ScheduleNextReviewUseCase @Inject constructor(
 ) {
     operator fun invoke(card: CardModel, recallQuality: RecallQuality) {
 
+        Log.e(FIRESTORE_LOG, "+++++ ${card.deckId}")
         cardsRepository.updateCard(card.updateCardStatusWithIntervals(recallQuality, System.currentTimeMillis()))
     }
 

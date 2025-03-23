@@ -6,6 +6,7 @@ import com.example.flashword.data.model.CardDto
 import com.example.flashword.data.model.DeckCreateDto
 import com.example.flashword.data.model.DeckDto
 import com.example.flashword.domain.repos.AccountService
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
@@ -71,6 +72,68 @@ class FirestoreDataSource @Inject constructor(
     }
 
     fun addCard(card: CardCreateDto) {
+//        val data1 = hashMapOf(
+//            "frontText" to "test front 1 review at 21.08.2025 \n\n test1",
+//            "backText" to "test back  1 \n" +
+//                    "\n" +
+//                    " test1",
+//            "createdAt" to Timestamp(1737480701, 0),
+//            "lastReviewAt" to Timestamp(1747848701, 0),
+//            "nextReviewAt" to Timestamp(1755797501, 0),
+//            "wasForgotten" to false,
+//        )
+//        val data2 = hashMapOf(
+//            "frontText" to "test front 2 \n\n test2",
+//            "backText" to "test back  2 \n" +
+//                    "\n" +
+//                    " test1",
+//            "createdAt" to Timestamp(1737480701, 0),
+//            "lastReviewAt" to Timestamp(1740331901, 0),
+//            "nextReviewAt" to Timestamp(1740159101, 0),
+//            "wasForgotten" to false,
+//        )
+//        val data3 = hashMapOf(
+//            "frontText" to "test front 3 \n\n test3",
+//            "backText" to "test back 3 \n" +
+//                    "\n" +
+//                    " test1",
+//            "createdAt" to Timestamp(1737480701, 0),
+//            "lastReviewAt" to Timestamp(1740331901, 0),
+//            "nextReviewAt" to Timestamp(1740159101, 0),
+//            "wasForgotten" to false,
+//        )
+//
+//        decksCollection
+//            .document(card.deckId)
+//            .collection("cards")
+//            .add(data1)
+//            .addOnSuccessListener { documentReference ->
+//                Log.d(FIRESTORE_LOG, "Card added with ID: ${documentReference.id}")
+//            }
+//            .addOnFailureListener { e ->
+//                Log.e(FIRESTORE_LOG, e.toString())
+//            }
+//        decksCollection
+//            .document(card.deckId)
+//            .collection("cards")
+//            .add(data2)
+//            .addOnSuccessListener { documentReference ->
+//                Log.d(FIRESTORE_LOG, "Card added with ID: ${documentReference.id}")
+//            }
+//            .addOnFailureListener { e ->
+//                Log.e(FIRESTORE_LOG, e.toString())
+//            }
+//        decksCollection
+//            .document(card.deckId)
+//            .collection("cards")
+//            .add(data3)
+//            .addOnSuccessListener { documentReference ->
+//                Log.d(FIRESTORE_LOG, "Card added with ID: ${documentReference.id}")
+//            }
+//            .addOnFailureListener { e ->
+//                Log.e(FIRESTORE_LOG, e.toString())
+//            }
+
         decksCollection
             .document(card.deckId)
             .collection("cards")
@@ -91,6 +154,7 @@ class FirestoreDataSource @Inject constructor(
             "nextReviewAt" to card.nextReviewAt,
             "wasForgotten" to card.wasForgotten
         )
+        Log.d(FIRESTORE_LOG, "--- ${card.deckId}")
 
         decksCollection
             .document(card.deckId)
@@ -98,10 +162,10 @@ class FirestoreDataSource @Inject constructor(
             .document(card.cardId)
             .update(updatedCards)
             .addOnSuccessListener {
-                Log.d(FIRESTORE_LOG, "Card updated with ID: ${card.cardId}")
+                Log.d(FIRESTORE_LOG, "Card updated with ID: ${card.cardId} ")
             }
             .addOnFailureListener { e ->
-                Log.e(FIRESTORE_LOG, e.toString())
+                Log.e(FIRESTORE_LOG, e.toString() + " ${card.deckId}")
             }
     }
 
@@ -116,6 +180,28 @@ class FirestoreDataSource @Inject constructor(
                 val card = it.toObject(CardDto::class.java)
                 if (card != null) {
                     card.cardId = it.id
+                    card
+                } else null
+            }
+        } catch (e: Exception) {
+            Log.e(FIRESTORE_LOG, e.toString())
+            emptyList()
+        }
+    }
+
+    suspend fun getCardsForReviewFromDeck(deckId: String, timestamp: Timestamp): List<CardDto> {
+        return try {
+            val snapshot = db.collection("decks").document(deckId)
+                .collection("cards")
+                .whereLessThan("nextReviewAt", timestamp)
+                .get()
+                .await()
+
+            snapshot.documents.mapNotNull {
+                val card = it.toObject(CardDto::class.java)
+                if (card != null) {
+                    card.cardId = it.id
+                    card.deckId = deckId
                     card
                 } else null
             }
