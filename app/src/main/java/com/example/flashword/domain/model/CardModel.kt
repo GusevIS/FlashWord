@@ -8,6 +8,7 @@ data class CardCreateModel(
     val createdAt: Long,
     val lastReviewAt: Long,
     val nextReviewAt: Long,
+    val interval: Long = nextReviewAt - lastReviewAt,
 
     val wasForgotten: Boolean,
 
@@ -24,6 +25,7 @@ data class CardModel(
     val createdAt: Long,
     val lastReviewAt: Long,
     val nextReviewAt: Long,
+    val interval: Long = nextReviewAt - lastReviewAt,
 
     val wasForgotten: Boolean,
     //val status: CardStatus

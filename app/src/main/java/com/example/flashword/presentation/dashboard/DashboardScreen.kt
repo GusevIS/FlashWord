@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -22,6 +24,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,6 +35,8 @@ import androidx.compose.material3.OutlinedTextFieldDefaults.colors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,10 +50,12 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -55,10 +63,12 @@ import com.example.flashword.R
 import com.example.flashword.presentation.dashboard.deck.DeckCard
 import com.example.flashword.ui.theme.setStatusBarColor
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
     state: DashboardUiState,
+    onSync: () -> Unit = {},
     onReviewAllClick: () -> Unit = {},
     onAddCardClick: (String, String) -> Unit = { _: String, _: String -> },
     onAddDeckClick: (String) -> Unit = {},
@@ -66,13 +76,37 @@ fun DashboardScreen(
 ) {
     setStatusBarColor(MaterialTheme.colorScheme.background.toArgb())
 
-    DashboardScreenContent(
-        state = state,
-        onReviewAllClick = onReviewAllClick,
-        onAddCardClick = onAddCardClick,
-        onAddDeckClick = onAddDeckClick,
-        onDeckClick = onDeckClick
-    )
+    Column {
+        TopAppBar(
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                titleContentColor = MaterialTheme.colorScheme.onBackground
+            ),
+            title = {},
+            actions = {
+                IconButton(
+                    onClick = onSync,
+                    modifier = Modifier.padding(end = 16.dp)) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.baseline_cloud_sync_24),
+                        contentDescription = "Localized description",
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            },
+            modifier = Modifier.height(36.dp)
+        )
+
+        DashboardScreenContent(
+            state = state,
+            onReviewAllClick = onReviewAllClick,
+            onAddCardClick = onAddCardClick,
+            onAddDeckClick = onAddDeckClick,
+            onDeckClick = onDeckClick
+        )
+    }
+
 }
 
 @Composable
@@ -106,11 +140,8 @@ fun DashboardScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                .padding(start = 16.dp, end = 16.dp)
         ) {
-
-            Spacer(modifier = Modifier.height(8.dp))
-
             Text(
                 text = stringResource(R.string.dashboard_title),
                 style = MaterialTheme.typography.headlineLarge,

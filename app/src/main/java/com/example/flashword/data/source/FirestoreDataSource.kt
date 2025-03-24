@@ -5,8 +5,11 @@ import com.example.flashword.data.model.CardCreateDto
 import com.example.flashword.data.model.CardDto
 import com.example.flashword.data.model.DeckCreateDto
 import com.example.flashword.data.model.DeckDto
+import com.example.flashword.data.model.DeckStatisticsDto
 import com.example.flashword.domain.repos.AccountService
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.AggregateSource
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
@@ -27,21 +30,22 @@ class FirestoreDataSource @Inject constructor(
     private val decksCollection = db.collection("decks")
 
     fun observeDecks(userId: String, listener: (List<DeckDto>) -> Unit) =
-        decksCollection.whereEqualTo("userId", auth.currentUserId).addSnapshotListener { snapshot, exception ->
-            if (exception != null) {
-                Log.e(FIRESTORE_LOG, exception.toString())
-                return@addSnapshotListener
-            }
+        decksCollection.whereEqualTo("userId", auth.currentUserId)
+            .addSnapshotListener { snapshot, exception ->
+                if (exception != null) {
+                    Log.e(FIRESTORE_LOG, exception.toString())
+                    return@addSnapshotListener
+                }
 
-            val decks = snapshot?.documents?.mapNotNull {
-                val deck = it.toObject(DeckDto::class.java)
-                if (deck != null) {
-                    deck.deckId = it.id
-                    deck
-                } else null
-            } ?: emptyList()
-            listener(decks)
-        }
+                val decks = snapshot?.documents?.mapNotNull {
+                    val deck = it.toObject(DeckDto::class.java)
+                    if (deck != null) {
+                        deck.deckId = it.id
+                        deck
+                    } else null
+                } ?: emptyList()
+                listener(decks)
+            }
 
     fun observeDecks(): Flow<List<DeckDto>> = callbackFlow {
         val listenerRegistration = decksCollection
@@ -152,7 +156,8 @@ class FirestoreDataSource @Inject constructor(
             "backText" to card.backText,
             "lastReviewAt" to card.lastReviewAt,
             "nextReviewAt" to card.nextReviewAt,
-            "wasForgotten" to card.wasForgotten
+            "wasForgotten" to card.wasForgotten,
+            "interval" to card.interval,
         )
         Log.d(FIRESTORE_LOG, "--- ${card.deckId}")
 
@@ -210,7 +215,205 @@ class FirestoreDataSource @Inject constructor(
             emptyList()
         }
     }
+
+    suspend fun getNewCardsCountByDeck(deckId: String): Long {
+        return try {
+            val result = decksCollection
+                .document(deckId)
+                .collection("cards")
+                .whereLessThan("nextReviewAt", Timestamp.now())
+                .whereLessThan("interval", 5 * 60 * 1000) //5 minutes
+                .count()
+                .get(AggregateSource.SERVER)
+                .await()
+            result.count
+        } catch (e: Exception) {
+            Log.d(FIRESTORE_LOG, "Error fetching total count: ", e)
+            0L
+        }
+    }
+
+    suspend fun getLearnCardsCountByDeck(deckId: String): Long {
+        return try {
+            val result = decksCollection
+                .document(deckId)
+                .collection("cards")
+                .whereLessThan("nextReviewAt", Timestamp.now())
+                .whereGreaterThan("interval", 5 * 60 * 1000 + 1)
+                .whereLessThan("interval", 10 * 24 * 60 * 60 * 1000) //10 days
+                .count()
+                .get(AggregateSource.SERVER)
+                .await()
+            result.count
+        } catch (e: Exception) {
+            Log.d(FIRESTORE_LOG, "Error fetching total count: ", e)
+            0L
+        }
+    }
+
+    suspend fun getReviewCardsCountByDeck(deckId: String): Long {
+        return try {
+            val result = decksCollection
+                .document(deckId)
+                .collection("cards")
+                .whereLessThan("nextReviewAt", Timestamp.now())
+                .whereGreaterThan("interval", 10 * 24 * 60 * 60 * 1000 + 1)
+                .count()
+                .get(AggregateSource.SERVER)
+                .await()
+            result.count
+        } catch (e: Exception) {
+            Log.d(FIRESTORE_LOG, "Error fetching total count: ", e)
+            0L
+        }
+    }
+
+    suspend fun getCardsCountByDeck(deckId: String): Long {
+        return try {
+            val result = decksCollection
+                .document(deckId)
+                .collection("cards")
+                .count()
+                .get(AggregateSource.SERVER)
+                .await()
+
+            result.count
+        } catch (e: Exception) {
+            Log.d(FIRESTORE_LOG, "Error fetching total count: ", e)
+            0L
+        }
+    }
+
+    fun observeCardsCountByDeck(deckId: String): Flow<Long> = callbackFlow {
+        val query = decksCollection
+            .document(deckId)
+            .collection("cards")
+
+        val listenerRegistration = query.addSnapshotListener { _, _ ->
+            query.count().get(AggregateSource.SERVER)
+                .addOnSuccessListener { aggregateResult ->
+                    Log.d(FIRESTORE_LOG, "cards in snapshot: ${aggregateResult.count}")
+                    trySend(aggregateResult.count)
+                }
+                .addOnFailureListener { exception ->
+                    Log.d(FIRESTORE_LOG, "Error fetching total count: ", exception)
+                    trySend(0L)
+                }
+        }
+
+        awaitClose { listenerRegistration.remove() }
+    }
+
+
+    fun observeReviewCardsCountByDeck(deckId: String): Flow<Long> = callbackFlow {
+        val query = decksCollection
+            .document(deckId)
+            .collection("cards")
+            .whereLessThan("nextReviewAt", Timestamp.now())
+            .whereGreaterThan("interval", 10 * 24 * 60 * 60 * 1000) // 10 дней
+
+        val listenerRegistration = query.addSnapshotListener { _, _ ->
+            query.count().get(AggregateSource.SERVER)
+                .addOnSuccessListener { aggregateResult ->
+                    trySend(aggregateResult.count)
+                }
+                .addOnFailureListener { exception ->
+                    Log.d(FIRESTORE_LOG, "Error fetching review cards count: ", exception)
+                    trySend(0L)
+                }
+        }
+
+        awaitClose { listenerRegistration.remove() }
+    }
+
+    fun observeLearnCardsCountByDeck(deckId: String): Flow<Long> = callbackFlow {
+        val query = decksCollection
+            .document(deckId)
+            .collection("cards")
+            .whereLessThan("nextReviewAt", Timestamp.now())
+            .whereGreaterThan("interval", 5 * 60 * 1000 + 1)
+            .whereLessThan("interval", 10 * 24 * 60 * 60 * 1000)
+
+        val listenerRegistration = query.addSnapshotListener { _, _ ->
+            query.count().get(AggregateSource.SERVER).addOnSuccessListener { aggregateResult ->
+                trySend(aggregateResult.count)
+            }.addOnFailureListener {
+                Log.d(FIRESTORE_LOG, "Error fetching total count: ", it)
+                trySend(0L)
+            }
+        }
+
+        awaitClose { listenerRegistration.remove() }
+    }
+
+    fun observeNewCardsCountByDeck(deckId: String): Flow<Long> = callbackFlow {
+        val query = decksCollection
+            .document(deckId)
+            .collection("cards")
+            .whereLessThan("nextReviewAt", Timestamp.now())
+            .whereLessThan("interval", 5 * 60 * 1000) // 5 minutes
+
+        val listenerRegistration = query.addSnapshotListener { snapshot, exception ->
+            if (exception != null) {
+                Log.d(FIRESTORE_LOG, "Error fetching new cards count: ", exception)
+                trySend(0L)
+                return@addSnapshotListener
+            }
+
+            snapshot?.let {
+                Log.d(FIRESTORE_LOG, "New cards in snapshot: ${snapshot.size()}")
+
+                val count = snapshot.size()
+                Log.d(FIRESTORE_LOG, "Fetched new cards count: $count")
+
+                trySend(count.toLong())
+            }
+        }
+
+        awaitClose { listenerRegistration.remove() }
+    }
+
+    suspend fun updateDeckStats(deckStatisticsDto: DeckStatisticsDto) {
+
+        try {
+            val querySnapshot = decksCollection
+                .document(deckStatisticsDto.deckId)
+                .collection("statistics")
+                .whereEqualTo("date", deckStatisticsDto.date)
+                .get()
+                .await()
+
+            if (!querySnapshot.isEmpty) {
+                val docRef = querySnapshot.documents.first().reference
+                FirebaseFirestore.getInstance().runTransaction { transaction ->
+                    transaction.update(docRef, "reviewedCount", FieldValue.increment(1))
+                }
+                Log.d(FIRESTORE_LOG, "The doc was found, counter incremented")
+            } else {
+                val newDocRef = decksCollection
+                    .document(deckStatisticsDto.deckId)
+                    .collection("statistics")
+                    .document()
+
+                val stats = hashMapOf<String, Any>(
+                    "deckId" to deckStatisticsDto.deckId,
+                    "date" to deckStatisticsDto.date,
+                    "cardsDue" to deckStatisticsDto.cardsDue,
+                    "reviewedCount" to 1
+                )
+                FirebaseFirestore.getInstance().runTransaction { transaction ->
+                    transaction.set(newDocRef, stats)
+                }
+                Log.d(FIRESTORE_LOG, "The document wasn't found, created a new one")
+            }
+
+            Log.d(FIRESTORE_LOG, "success")
+        } catch (e: Exception) {
+            Log.e(FIRESTORE_LOG, "Error during operation", e)
+        }
+    }
 }
+
 
 fun Query.snapshotFlow(): Flow<QuerySnapshot> = callbackFlow {
     val listenerRegistration = addSnapshotListener { value, error ->

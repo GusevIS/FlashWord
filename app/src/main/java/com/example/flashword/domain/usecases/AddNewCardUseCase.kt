@@ -20,6 +20,7 @@ class AddNewCardUseCase @Inject constructor(
             createdAt = createdAt,
             lastReviewAt = createdAt,
             nextReviewAt = createdAt,
+            interval = 0L,
             wasForgotten = false
         )
         return withContext(Dispatchers.IO) {

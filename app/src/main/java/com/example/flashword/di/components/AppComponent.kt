@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.flashword.MainActivity
 import com.example.flashword.data.remote.AccountServiceImpl
 import com.example.flashword.data.remote.CardsRepositoryImpl
+import com.example.flashword.data.remote.DeckStatisticsRepositoryImpl
 import com.example.flashword.data.remote.DecksRepositoryImpl
 import com.example.flashword.di.AppContext
 import com.example.flashword.di.AppScope
@@ -14,6 +15,7 @@ import com.example.flashword.di.ViewModelClassKey
 import com.example.flashword.di.modules.UserPreferencesModule
 import com.example.flashword.domain.repos.AccountService
 import com.example.flashword.domain.repos.CardsRepository
+import com.example.flashword.domain.repos.DeckStatisticsRepository
 import com.example.flashword.domain.repos.DecksRepository
 import com.example.flashword.domain.user_data.UserManager
 import com.example.flashword.presentation.addcard.AddCardViewModel
@@ -109,6 +111,9 @@ abstract class AppsBinds {
 
     @Binds
     abstract fun bindsCardsRepository(repo: CardsRepositoryImpl): CardsRepository
+
+    @Binds
+    abstract fun bindsDeckStatisticsRepository(repo: DeckStatisticsRepositoryImpl): DeckStatisticsRepository
 }
 
 @Module

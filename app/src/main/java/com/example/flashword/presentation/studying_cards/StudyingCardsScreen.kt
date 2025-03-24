@@ -1,5 +1,6 @@
 package com.example.flashword.presentation.studying_cards
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -112,6 +113,7 @@ fun StudyingCardsScreen(
             backText = state.card.backText,
             isBackSide = state.isBackSide,
             reviewingEnded = state.reviewingEnded,
+            cardIndex = state.cardIndex,
             cardsReviewed = state.totalCards,
             onRecallClick = onRecallClick,
             onShowAnswerClick = onShowAnswerClick
@@ -126,6 +128,7 @@ fun StudyingCardsScreenContent(
     backText: String,
     isBackSide: Boolean,
     reviewingEnded: Boolean,
+    cardIndex: Int = 0,
     cardsReviewed: Int = 0,
     onRecallClick: ( RecallQuality) -> Unit,
     onShowAnswerClick: () -> Unit,
@@ -158,14 +161,14 @@ fun StudyingCardsScreenContent(
                 }
             } else {
                 AnimatedContent(
-                    frontText,
+                    cardIndex, //TODO change to any other key
                     transitionSpec = {
                         slideInHorizontally { width -> width } + fadeIn() togetherWith
                                 slideOutHorizontally { width -> -width } + fadeOut()
                     },
                     label = "animated content"
-                ) { targetText ->
-
+                ) { index ->
+                    Log.d("screen", index.toString())
                     val animatedRotation by animateFloatAsState(
                         targetValue = if (isBackSide) 180f else 0f,
                         animationSpec = tween(durationMillis = 1200),
@@ -176,14 +179,14 @@ fun StudyingCardsScreenContent(
                             .fillMaxWidth()
                             .graphicsLayer {
                                 rotationY = animatedRotation
-                                cameraDistance = 32 * density
+                                cameraDistance = 56 * density
                             }
                             .padding(bottom = 24.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         if (animatedRotation <= 90f) {
                             StudyingCard() {
-                                StudyingFrontCard(targetText, onShowAnswerClick)
+                                StudyingFrontCard(frontText, onShowAnswerClick)
                             }
                         } else {
                             StudyingCard(
@@ -207,9 +210,9 @@ fun StudyingCard(
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.White),
         modifier = modifier
-            .padding(8.dp)
+            .padding(16.dp)
             .fillMaxWidth()
-            .padding(bottom = 24.dp),
+            .padding(bottom = 16.dp),
         elevation = CardDefaults.cardElevation(12.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -360,7 +363,7 @@ fun DeckProgressBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(24.dp)
-            .padding(8.dp),
+            .padding(start = 8.dp, end = 8.dp, top = 8.dp,),
         trackColor = Color.White,
         color = MaterialTheme.colorScheme.error,
         gapSize = (-15).dp,

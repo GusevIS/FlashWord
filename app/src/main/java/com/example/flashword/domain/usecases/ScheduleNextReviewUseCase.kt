@@ -3,17 +3,29 @@ package com.example.flashword.domain.usecases
 import android.util.Log
 import com.example.flashword.data.source.FIRESTORE_LOG
 import com.example.flashword.domain.model.CardModel
+import com.example.flashword.domain.model.DeckStatistics
 import com.example.flashword.domain.repos.CardsRepository
+import com.example.flashword.domain.repos.DeckStatisticsRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ScheduleNextReviewUseCase @Inject constructor(
-    private val cardsRepository: CardsRepository
+    private val cardsRepository: CardsRepository,
+    private val deckStatisticsRepository: DeckStatisticsRepository
 ) {
-    operator fun invoke(card: CardModel, recallQuality: RecallQuality) {
+    suspend operator fun invoke(card: CardModel, recallQuality: RecallQuality) = withContext(Dispatchers.IO) {
 
-        Log.e(FIRESTORE_LOG, "+++++ ${card.deckId}")
+        Log.e(FIRESTORE_LOG, "111+++++ ${card.deckId}")
         cardsRepository.updateCard(card.updateCardStatusWithIntervals(recallQuality, System.currentTimeMillis()))
+        deckStatisticsRepository.updateDeckStats(DeckStatistics(
+            card.deckId,
+            getTodayStartInNanos(),
+            0,
+            1,
+        ))
     }
 
 
@@ -28,17 +40,33 @@ class ScheduleNextReviewUseCase @Inject constructor(
                     RecallQuality.WRONG -> STARTED_INTERVAL
                 }
         }
+        val lastReviewAt = System.currentTimeMillis()
+        val nextReviewAt = currentTime + nextInterval
 
-        return this.copy(
-            nextReviewAt = currentTime + nextInterval,
-            lastReviewAt = System.currentTimeMillis(),
-            wasForgotten = !this.wasForgotten
-        )
+            return this.copy(
+                nextReviewAt = nextReviewAt,
+                lastReviewAt = lastReviewAt,
+                wasForgotten = !this.wasForgotten,
+                interval = nextReviewAt - lastReviewAt
+            )
     }
 
 }
 
 var STARTED_INTERVAL: Long = TimeUnit.MINUTES.toMillis(2)
+
+fun getTodayStartInNanos(): Long {
+    val calendar = Calendar.getInstance()
+
+    // Установим время на полночь (00:00:00) в локальной временной зоне
+    calendar.set(Calendar.HOUR_OF_DAY, 0)
+    calendar.set(Calendar.MINUTE, 0)
+    calendar.set(Calendar.SECOND, 0)
+    calendar.set(Calendar.MILLISECOND, 0)
+
+    // Возвращаем время в миллисекундах
+    return calendar.timeInMillis
+}
 
 enum class RecallQuality {
     WRONG,
